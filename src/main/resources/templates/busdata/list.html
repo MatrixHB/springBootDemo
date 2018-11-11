@@ -26,7 +26,7 @@
 <div class="container-fluid">
     <div class="row">
         <!--引入侧边栏-->
-        <div th:replace="commons/bar::sidebar(activeUri='emps')"></div>
+        <div th:replace="commons/bar::sidebar(activeUri='busdata')"></div>
 
         <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4"><div class="chartjs-size-monitor" style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; pointer-events: none; visibility: hidden; z-index: -1;"><div class="chartjs-size-monitor-expand" style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;"><div style="position:absolute;width:1000000px;height:1000000px;left:0;top:0"></div></div><div class="chartjs-size-monitor-shrink" style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;"><div style="position:absolute;width:200%;height:200%;left:0; top:0"></div></div></div>
 
@@ -35,27 +35,18 @@
                 <table class="table table-striped table-sm">
                     <thead>
                     <tr>
-                        <th>#</th>
-                        <th>lastName</th>
-                        <th>email</th>
-                        <th>gender</th>
-                        <th>department</th>
-                        <th>birth</th>
-                        <th>操作</th>
+                        <th>busNumber</th>
+                        <th>busName</th>
+                        <th>busLoad</th>
+                        <th>deviceName</th>
                     </tr>
                     </thead>
                     <tbody>
-                        <tr th:each="emp:${emps}">
-                            <td th:text="${emp.id}">1</td>
-                            <td th:text="${emp.lastName}">1</td>
-                            <td th:text="${emp.email}">1</td>
-                            <td th:text="${emp.gender}">1</td>
-                            <td th:text="${emp.department.departmentName}">1</td>
-                            <td th:text="${#dates.format(emp.birth,'yyyy-MM-dd HH:mm:ss')}">1</td>
-                            <td>
-                                <a  href="#" th:href="@{/emp/}+${emp.id}" class="btn btn-sm btn-primary">编辑</a>
-                                <button th:attr="del_uri=@{/emp/}+${emp.id}"  class="btn btn-sm btn-danger deleteBtn">删除</button>
-                            </td>
+                        <tr th:each="data:${busdata}">
+                            <td th:text="${data.busNumber}">1</td>
+                            <td th:text="${data.busName}">1</td>
+                            <td th:text="${data.busLoad}">1</td>
+                            <td th:text="${data.deviceName}">1</td>
                         </tr>
                     </tbody>
                 </table>
