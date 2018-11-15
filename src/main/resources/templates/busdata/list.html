@@ -30,7 +30,7 @@
 
         <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4"><div class="chartjs-size-monitor" style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; pointer-events: none; visibility: hidden; z-index: -1;"><div class="chartjs-size-monitor-expand" style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;"><div style="position:absolute;width:1000000px;height:1000000px;left:0;top:0"></div></div><div class="chartjs-size-monitor-shrink" style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;"><div style="position:absolute;width:200%;height:200%;left:0; top:0"></div></div></div>
 
-            <h2><a  href="#" th:href="@{/emp}" class="btn btn-success">添加按钮</a></h2>
+            <h2><a  href="#" th:href="@{/addBus}" class="btn btn-success">添加按钮</a></h2>
             <div class="table-responsive">
                 <table class="table table-striped table-sm">
                     <thead>
@@ -39,6 +39,7 @@
                         <th>busName</th>
                         <th>busLoad</th>
                         <th>deviceName</th>
+                        <th>操作</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -47,12 +48,23 @@
                             <td th:text="${data.busName}">1</td>
                             <td th:text="${data.busLoad}">1</td>
                             <td th:text="${data.deviceName}">1</td>
+                            <td>
+                                <a  href="#" th:href="@{/busdata/}+${data.busNumber}" class="btn btn-sm btn-primary">编辑</a>
+                                <!--删除按钮方式一，先用表单写post请求，再通过添加input来写delete请求-->
+ <!--                               <form th:action="@{/busdata/}+${data.busNumber}" method="post">
+                                    <input type="hidden" name="_method" value="delete">
+                                    <button type="submit"  class="btn btn-sm btn-danger">删除</button>
+                                </form>
+<!-->
+                                <!--删除按钮方式二，把表单写在main外面，同时添加相应的javaScript-->
+                                <button th:attr="del_uri=@{/busdata/}+${data.busNumber}" class="btn btn-sm btn-danger deleteBtn">删除</button>
+                            </td>
                         </tr>
                     </tbody>
                 </table>
             </div>
         </main>
-        <form id="deleteEmpForm" method="post">
+        <form id="deleteBusForm" method="post">
             <input type="hidden" name="_method" value="delete">
         </form>
     </div>
@@ -73,7 +85,8 @@
 
 <script>
     $(".deleteBtn").click(function () {
-        $("#deleteEmpForm").attr("action",$(this).attr("del_uri")).submit();
+        //删除按钮的js，将按钮的属性“del_uri”作为表单deleteBusForm的地址属性，并以delete请求提交上去
+        $("#deleteBusForm").attr("action",$(this).attr("del_uri")).submit();
 
     })
 </script>

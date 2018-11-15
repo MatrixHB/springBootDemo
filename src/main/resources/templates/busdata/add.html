@@ -9,7 +9,7 @@
     <meta name="author" content="" />
     <link rel="icon" href="https://getbootstrap.com/favicon.ico" />
 
-    <title>员工添加</title>
+    <title>节点添加</title>
 
     <!-- Bootstrap core CSS -->
     <link href="./Dashboard_files/bootstrap.min.css"  th:href="@{/css/bootstrap.min.css}" rel="stylesheet" />
@@ -26,51 +26,42 @@
 <div class="container-fluid">
     <div class="row">
         <!--引入侧边栏-->
-        <div th:replace="commons/bar::sidebar(activeUri='emps')"></div>
+        <div th:replace="commons/bar::sidebar(activeUri='busdata')"></div>
 
         <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4"><div class="chartjs-size-monitor" style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; pointer-events: none; visibility: hidden; z-index: -1;"><div class="chartjs-size-monitor-expand" style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;"><div style="position:absolute;width:1000000px;height:1000000px;left:0;top:0"></div></div><div class="chartjs-size-monitor-shrink" style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;"><div style="position:absolute;width:200%;height:200%;left:0; top:0"></div></div></div>
-            <form th:action="@{/emp}" method="post">
-                <!--发送put请求-->
-                <!--1.SpringMVC配置HiddenHttpMethodFilter
-                    2.页面创建一个post表单
-                    3.创建一个 input name_method 值就是我们请求的方式-->
-                <input type="hidden" name="_method" value="put" th:if="${emp!=null}">
+            <form th:action="@{/bus}" method="post">
 
-                <input type="hidden" name="id" th:value="${emp.id}" th:if="${emp!=null}">
-                <!-- LastName -->
+                <!--添加和修改的表单二合一，即页面重用-->
+                <!--但是修改表单要求各项信息回显，因此增加th:value-->
+                <!--区分此时页面是添加还是修改，可以通过是否传入参数bus(bus!=null)来判断-->
+
+                <!--如何添加put请求，使修改生效-->
+                <!--表单的method只能是post，不能改为put，因此需要springMVC配置HiddenHttpMethodFilter-->
+                <!--增加一个input，name为_method，值为指定的请求方式-->
+
+                <input type="hidden" name="_method" value="put" th:if="${bus!=null}">
+
                 <div class="form-group">
-                    <label for="LastName">LastName</label>
-                    <input type="text" class="form-control" id="LastName" name="lastName" placeholder="LastName" th:value="${emp!=null}?${emp.lastName}">
+                    <label for="busNumber">BusNumber</label>
+                    <input type="text" class="form-control" id="busNumber" name="busNumber" placeholder="busNumber" th:value="${bus!=null}?${bus.busNumber}">
                 </div>
-                <!-- Email -->
+
                 <div class="form-group">
-                    <label for="Email">Email</label>
-                    <input type="email" class="form-control" id="Email"  name="email" placeholder="zhangsan@163.com" th:value="${emp!=null}?${emp.email}">
+                    <label for="busName">BusName</label>
+                    <input type="text" class="form-control" id="busName"  name="busName" placeholder="busName" th:value="${bus!=null}?${bus.busName}">
                 </div>
-                <!--gender-->
+
                 <div class="form-group">
-                    <label >Gender</label><br/>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="gender" value="1" th:checked="${emp!=null}?${emp.gender}==1">
-                        <label class="form-check-label" >男</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="gender" value="0" th:checked="${emp!=null}?${emp.gender}==0">
-                        <label class="form-check-label" >女</label>
-                    </div>
+                    <label for="busLoad">BusLoad</label>
+                    <input type="text" class="form-control" id="busLoad"  name="busLoad" placeholder="busLoad" th:value="${bus!=null}?${bus.busLoad}">
                 </div>
-                <!-- department -->
+
                 <div class="form-group">
-                    <label >department</label>
-                    <select class="form-control"  name="department.id" >
-                        <option th:selected="${emp!=null}?${dept.id == emp.department.id}" th:each="dept:${depts}" th:value="${dept.id}" th:text="${dept.departmentName}"></option>
-                    </select>
+                    <label for="deviceName">DeviceName</label>
+                    <input type="text" class="form-control" id="deviceName"  name="deviceName" placeholder="deviceName" th:value="${bus!=null}?${bus.deviceName}">
                 </div>
-                <div class="form-group">
-                    <label for="birthDate">Birth</label>
-                    <input type="text" class="form-control" id="birthDate" placeholder="2012-12-12" name="birth" th:value="${emp!=null}?${#dates.format(emp.birth,'yyyy-MM-dd HH:mm:ss')}">
-                </div>
-                <button type="submit" class="btn btn-primary" th:text="${emp!=null}?'修改':'添加'">添 加</button>
+
+                <button type="submit" class="btn btn-primary" th:text="${bus!=null}?'修改':'添加'">添 加</button>
             </form>
         </main>
     </div>
