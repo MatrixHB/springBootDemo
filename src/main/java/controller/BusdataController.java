@@ -1,8 +1,12 @@
 package controller;
 
 import dao.BusDataDao;
+import dao.BusDataDaoMyBatis;
 import entities.BusData;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -17,14 +21,47 @@ public class BusdataController {
     @Autowired
     BusDataDao busDataDao;
 
+    @Autowired
+    BusDataDaoMyBatis busDataDaoMyBatis;
+
+    //myBatis操作数据库
+    @ResponseBody
+    @GetMapping("/getbus/{id}")
+    @Cacheable(value="bus",key="#a0")
+    public BusData getBus(@PathVariable("id") Integer id){
+        return busDataDaoMyBatis.queryById(id);
+    }
+
+    @ResponseBody
+    @RequestMapping("/updatebus")   //浏览器可输入http://localhost:8080/updatebus?busNumber=1&busName=XX站&busLoad=90&deviceName=XXX设备
+    @CachePut(value="bus",key="#busData.busNumber")
+    public BusData updateBus(BusData busData){
+        busDataDaoMyBatis.update(busData);
+        //这里为什么不直接return busData呢？
+        //因为这里修改结果会存入缓存，如果传入参数busData有字段为null
+        // 则直接return busdata会用null去覆盖缓存中该busData原来字段的值，导致缓存与数据库不一致
+        return busDataDaoMyBatis.queryById(busData.getBusNumber());
+    }
+
+
     //查询节点信息
     @GetMapping("/busdata")
-    public String list(Model model) throws Exception{
+    public String queryBus(Model model)throws Exception{
+
+        Map<Integer, BusData> map = busDataDao.queryBusData();
+        Collection<BusData> list = map.values();
+        model.addAttribute("busdata",list);
+        //thymrleaf默认拼串“classpath:/busdata/list.html”
+        return "busdata/list";
+    }
+
+    //列出现有节点信息，不执行查询操作
+    @GetMapping("/list")
+    public String list(Model model){
 
         Map<Integer, BusData> map = busDataDao.getMap();
         Collection<BusData> list = map.values();
         model.addAttribute("busdata",list);
-        //thymrleaf默认拼串“classpath:/busdata/list.html”
         return "busdata/list";
     }
 
@@ -39,8 +76,8 @@ public class BusdataController {
     @PostMapping("/bus")
     public String addBus(BusData busData){
         busDataDao.saveBusData(busData);
-        //表示重定向到“查询节点信息”的请求
-        return "redirect:/busdata";
+        //表示重定向到“列出现有节点信息”的请求
+        return "redirect:/list";
     }
 
     //来到节点修改页面（与添加页面二合一），busNumber是请求路径上的变量
@@ -58,13 +95,14 @@ public class BusdataController {
     @PutMapping("/bus")
     public String editBus(BusData busData){
         busDataDao.saveBusData(busData);
-        return "redirect:/busdata";
+        return "redirect:/list";
     }
 
+    //删除节点信息
     @DeleteMapping("/busdata/{busNumber}")
     public String deleteBus(@PathVariable Integer busNumber){
         busDataDao.deleteBusData(busNumber);
-        return "redirect:/busdata";
+        return "redirect:/list";
     }
 
 }

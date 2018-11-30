@@ -1,41 +1,47 @@
 package dao;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
+
 import entities.BusData;
+import mapper.BusDataMappper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
 
+import javax.annotation.Resource;
+import javax.crypto.KeyGenerator;
 import javax.security.auth.login.Configuration;
-import java.util.ArrayList;
+import javax.sql.DataSource;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class BusDataDao {
 
+    @Autowired
+    DataSource dataSource;
+
     private static Map<Integer, BusData> map = new HashMap<>(600);
 
-    private static String driver = "oracle.jdbc.driver.OracleDriver";
-    private static String url = "jdbc:oracle:thin:@10.15.194.25:1521:idpora";
-    private static String username = "RDS-GY";
-    private static String password = "123456";
+    //原本采用初始化代码块进行map的初始化，但出现错误
+    //错误原因是@Autowired注解会在初始化代码块之后执行，所以queryBusData中的datasource为空
+//    {
+//        try {
+//            map = queryBusData();
+//        }catch (Exception e){
+//            e.printStackTrace();
+//        }
+//    }
 
-    {
-        try {
-            map = queryBusData();
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-    }
-
+    @Cacheable(value="bus", keyGenerator = "myKeyGenerator")
     public Map<Integer, BusData> queryBusData() throws Exception{
+        System.out.println(dataSource.getClass());
+        Connection conn = dataSource.getConnection();
 
-        Class.forName(driver);
-        Connection conn = DriverManager.getConnection(url, username, password);
         Statement stmt = conn.createStatement();
-        String sql = "select * from BUSDATA";
+        String sql = "select * from BUSDATATEST";
         ResultSet res = stmt.executeQuery(sql);
 
         while (res.next()) {

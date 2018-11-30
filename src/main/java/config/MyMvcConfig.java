@@ -10,6 +10,7 @@ import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
+//扩展springMVC配置，注意实现WebMvcConfigurer接口
 @Configuration
 public class MyMvcConfig implements WebMvcConfigurer {
 

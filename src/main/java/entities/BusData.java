@@ -1,6 +1,8 @@
 package entities;
 
-public class BusData {
+import java.io.Serializable;
+
+public class BusData implements Serializable {
 
     private int busNumber;
     private String busName;
