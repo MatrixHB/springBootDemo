@@ -8,7 +8,7 @@ import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication             //(exclude = DataSourceAutoConfiguration.class)
-@ComponentScan(value = {"controller","config"})
+@ComponentScan(value = {"controller","config","advice"})
 @MapperScan(value = "mapper")
 @EnableCaching
 public class SpringbootdemoApplication {

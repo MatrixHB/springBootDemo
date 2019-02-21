@@ -9,6 +9,7 @@ import mapper.BusDataMappper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.support.SimpleCacheManager;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
@@ -35,7 +36,7 @@ public class BusDataDao {
 //        }
 //    }
 
-    @Cacheable(value="bus", keyGenerator = "myKeyGenerator")
+    @Cacheable(value="bus", keyGenerator = "myKeyGenerator", cacheManager = "concurrentMapCacheManager")
     public Map<Integer, BusData> queryBusData() throws Exception{
         System.out.println(dataSource.getClass());
         Connection conn = dataSource.getConnection();

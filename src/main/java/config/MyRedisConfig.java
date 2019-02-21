@@ -5,6 +5,7 @@ import org.springframework.cache.CacheManager;
 import org.springframework.cache.config.CacheManagementConfigUtils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -34,6 +35,7 @@ public class MyRedisConfig {
     }
 
     //会覆盖默认配置的RedisCacheManager
+    @Primary
     @Bean
     public RedisCacheManager redisCacheManager(RedisConnectionFactory redisConnectionFactory){
         Jackson2JsonRedisSerializer<BusData> serializer = new Jackson2JsonRedisSerializer<BusData>(BusData.class);

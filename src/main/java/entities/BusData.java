@@ -1,12 +1,22 @@
 package entities;
 
+import org.springframework.format.annotation.NumberFormat;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 public class BusData implements Serializable {
 
     private int busNumber;
+
+    @NotEmpty
     private String busName;
+
+    @NumberFormat(pattern = "###.#")
     private Double busLoad;
+
     private String deviceName;
 
 

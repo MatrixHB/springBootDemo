@@ -7,10 +7,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.SqlOutParameter;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -27,14 +32,14 @@ public class BusdataController {
     //myBatis操作数据库
     @ResponseBody
     @GetMapping("/getbus/{id}")
-    @Cacheable(value="bus",key="#a0")
+    @Cacheable(value="bus", key="#a0")
     public BusData getBus(@PathVariable("id") Integer id){
         return busDataDaoMyBatis.queryById(id);
     }
 
     @ResponseBody
     @RequestMapping("/updatebus")   //浏览器可输入http://localhost:8080/updatebus?busNumber=1&busName=XX站&busLoad=90&deviceName=XXX设备
-    @CachePut(value="bus",key="#busData.busNumber")
+    @CachePut(value="bus", key="#busData.busNumber")
     public BusData updateBus(BusData busData){
         busDataDaoMyBatis.update(busData);
         //这里为什么不直接return busData呢？
@@ -49,8 +54,10 @@ public class BusdataController {
     public String queryBus(Model model)throws Exception{
 
         Map<Integer, BusData> map = busDataDao.queryBusData();
-        Collection<BusData> list = map.values();
-        model.addAttribute("busdata",list);
+        if (map != null){
+            Collection<BusData> list = map.values();
+            model.addAttribute("busdata",list);
+        }
         //thymrleaf默认拼串“classpath:/busdata/list.html”
         return "busdata/list";
     }
@@ -73,8 +80,16 @@ public class BusdataController {
 
     //添加节点信息完成并回到列表页面
     //springMVC自动将请求参数和入参对象的属性进行一一绑定，要求请求参数的名字和入参对象javaBean中属性名一致
+    //这里入参时带注解@Valid，说明要进行校验，根据POJO属性带的注解进行JSR303校验
     @PostMapping("/bus")
-    public String addBus(BusData busData){
+    public String addBus(@Valid BusData busData, BindingResult bindingResult){
+        //数据校验出错，回到添加页面
+        if (bindingResult.getErrorCount() > 0) {
+            for (FieldError error : bindingResult.getFieldErrors()) {
+                System.out.println(error.getField() + " -- " + error.getDefaultMessage());
+            }
+            return "busdata/add";
+        }
         busDataDao.saveBusData(busData);
         //表示重定向到“列出现有节点信息”的请求
         return "redirect:/list";

@@ -18,7 +18,7 @@ public class LoginController {
     public String login(@RequestParam("username") String username,
                         @RequestParam("password") String password,
                         Map<String, String> map, HttpSession session){
-        if( username.equals("admin") && password.equals("123456")){
+        if( "admin".equals(username) && "123456".equals(password)){
             //session记录登录信息
             session.setAttribute("user",username);
             return "redirect:/main.html";
